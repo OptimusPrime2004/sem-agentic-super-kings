@@ -10,6 +10,13 @@ class InventoryTool:
             Path("data") / "inventory.csv"
         )
 
+        self.inventory = self.inventory.rename(
+            columns={
+                "on_hand": "current_stock",
+                "reorder_point": "reorder_level"
+            }
+        )
+
     def get_all_inventory(self):
 
         return self.inventory

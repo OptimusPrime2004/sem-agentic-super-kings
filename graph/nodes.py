@@ -38,7 +38,8 @@ def forecast_node(state):
 
 def procurement_node(state):
 
-    result = run_procurement_agent()
+    question = state.get("user_query", "")
+    result = run_procurement_agent(question)
 
     state["procurement"] = result
 
@@ -49,7 +50,8 @@ def procurement_node(state):
 
 def risk_node(state):
 
-    result = run_risk_agent()
+    question = state.get("user_query", "")
+    result = run_risk_agent(question)
 
     state["risk"] = result
 

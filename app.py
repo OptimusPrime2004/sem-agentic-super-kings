@@ -13,6 +13,44 @@ from ui.logs import render_logs
 from ui.approval import approval_screen
 
 
+def render_workflow_result(result):
+
+    if result.get("final_response"):
+        st.markdown(result["final_response"])
+        return
+
+    inventory = result.get("inventory", {})
+    if inventory.get("low_stock_items"):
+        st.markdown("### Low Stock Items")
+        st.write(
+            f"Low stock items: {inventory.get('low_stock_count', len(inventory['low_stock_items']))}"
+        )
+        st.table(inventory["low_stock_items"])
+
+    forecast = result.get("forecast", {})
+    if forecast.get("high_demand_products"):
+        st.markdown("### High Demand Products")
+        st.table(forecast["high_demand_products"][:10])
+
+    procurement = result.get("procurement", {})
+    if procurement.get("output"):
+        st.markdown("### Procurement Response")
+        st.text(procurement["output"])
+
+    risk = result.get("risk", {})
+    if risk.get("output"):
+        st.markdown("### Risk Response")
+        st.text(risk["output"])
+
+    if not any([
+        inventory.get("low_stock_items"),
+        forecast.get("high_demand_products"),
+        procurement.get("output"),
+        risk.get("output")
+    ]):
+        st.json(result)
+
+
 st.set_page_config(
     page_title="HexaFlow AI",
     page_icon="🚚",
@@ -89,6 +127,8 @@ if page == "Dashboard":
 
         st.session_state.response = result
 
+        render_workflow_result(result)
+
         st.success("Workflow Completed")
 
 # ------------------------
@@ -134,7 +174,7 @@ elif page == "AI Copilot":
 
         # Update workflow state
         st.session_state.workflow_state = result
-        st.write(result)
+        render_workflow_result(result)
 
 # ------------------------
 # Workflow

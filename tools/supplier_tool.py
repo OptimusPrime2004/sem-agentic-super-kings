@@ -33,6 +33,23 @@ def get_supplier_details(supplier_id: str) -> dict:
 
     row = supplier.iloc[0]
 
+    rating = float(row["reliability_score"])
+    if "on_time_rate" in row:
+        rating = (rating + float(row["on_time_rate"])) / 2
+
+    lead_time_status = str(row.get("lead_time_status", ""))
+    lead_time_days = 0
+    if "day" in lead_time_status.lower():
+        digits = [int(token) for token in lead_time_status.split() if token.isdigit()]
+        if digits:
+            lead_time_days = digits[0]
+    elif "on-time" in lead_time_status.lower() or "on time" in lead_time_status.lower():
+        lead_time_days = 2
+    else:
+        lead_time_days = 7
+
+    minimum_order_quantity = int(row.get("minimum_order_quantity", 1))
+
     return {
 
         "success": True,
@@ -41,15 +58,15 @@ def get_supplier_details(supplier_id: str) -> dict:
 
         "supplier_name": row["supplier_name"],
 
-        "reliability": row["reliability"],
+        "reliability": float(row["reliability_score"]),
 
-        "lead_time_days": int(row["lead_time_days"]),
+        "lead_time_days": lead_time_days,
 
         "minimum_order_quantity":
 
-            int(row["minimum_order_quantity"]),
+            minimum_order_quantity,
 
-        "rating": float(row["rating"])
+        "rating": rating
 
     }
 
@@ -61,6 +78,11 @@ def get_best_supplier() -> dict:
     """
 
     df = pd.read_csv(SUPPLIER_PATH)
+    df["rating"] = df["reliability_score"].astype(float)
+    if "on_time_rate" in df.columns:
+        df["rating"] = (
+            df["rating"] + df["on_time_rate"].astype(float)
+        ) / 2
 
     df = df.sort_values(
         by=["rating"],
@@ -68,6 +90,17 @@ def get_best_supplier() -> dict:
     )
 
     row = df.iloc[0]
+
+    lead_time_status = str(row.get("lead_time_status", ""))
+    lead_time_days = 0
+    if "day" in lead_time_status.lower():
+        digits = [int(token) for token in lead_time_status.split() if token.isdigit()]
+        if digits:
+            lead_time_days = digits[0]
+    elif "on-time" in lead_time_status.lower() or "on time" in lead_time_status.lower():
+        lead_time_days = 2
+    else:
+        lead_time_days = 7
 
     return {
 
@@ -77,8 +110,8 @@ def get_best_supplier() -> dict:
 
         "rating": float(row["rating"]),
 
-        "lead_time_days": int(row["lead_time_days"]),
+        "lead_time_days": lead_time_days,
 
-        "reliability": row["reliability"]
+        "reliability": row["reliability_score"]
 
     }

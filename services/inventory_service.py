@@ -4,6 +4,8 @@ inventory_service.py
 Business logic layer for inventory.
 """
 
+import pandas as pd
+
 from tools.inventory_tool import InventoryTool
 from tools.forecast_tool import ForecastTool
 
@@ -27,19 +29,22 @@ class InventoryService:
                 row["sku"]
             )
 
+            product_name = row.get("product_name", None)
+            if product_name is None or pd.isna(product_name):
+                product_name = row["sku"]
+
+            current_stock = int(row["current_stock"])
+            reorder_level = int(row["reorder_level"])
+
             results.append({
 
                 "sku": row["sku"],
 
-                "product_name": row["product_name"],
+                "product_name": product_name,
 
-                "current_stock": int(
-                    row["current_stock"]
-                ),
+                "current_stock": current_stock,
 
-                "reorder_level": int(
-                    row["reorder_level"]
-                ),
+                "reorder_level": reorder_level,
 
                 "predicted_demand":
                     forecast["predicted_demand"],
@@ -49,8 +54,8 @@ class InventoryService:
 
                 "needs_reorder":
 
-                    row["current_stock"] <=
-                    row["reorder_level"]
+                    current_stock <=
+                    reorder_level
 
             })
 

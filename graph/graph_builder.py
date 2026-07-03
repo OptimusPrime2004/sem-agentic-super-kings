@@ -44,7 +44,7 @@ workflow.add_conditional_edges(
     "approval",
     approval_router,
     {
-        "approval": "approval",
+        "approval": END,
         "logistics": "logistics_agent"
     }
 )
