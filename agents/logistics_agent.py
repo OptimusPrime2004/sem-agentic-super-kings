@@ -1,9 +1,3 @@
-"""
-logistics_agent.py
-
-HexaFlow AI
-"""
-
 from langchain.agents import AgentExecutor, create_tool_calling_agent
 from langchain_openai import AzureChatOpenAI
 
