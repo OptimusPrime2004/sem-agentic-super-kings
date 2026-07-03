@@ -1,8 +1,3 @@
-"""
-analytics_tool.py
-"""
-
-
 from langchain_core.tools import tool
 
 

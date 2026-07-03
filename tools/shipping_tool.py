@@ -1,9 +1,3 @@
-"""
-shipping_tool.py
-
-Mock Shipping Tool
-"""
-
 from langchain_core.tools import tool
 
 
