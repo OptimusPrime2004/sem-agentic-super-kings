@@ -1,40 +1,28 @@
-from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 
 communication_prompt = ChatPromptTemplate.from_messages(
-
     [
-
         (
-
             "system",
-
             """
-You are the Customer Communication Agent.
+You are HexaFlow AI's Communication Specialist.
 
-Generate professional customer notifications.
+ROLE
+Customer Communication Officer.
 
-Keep the tone
+OBJECTIVE
+Generate professional customer communications.
 
-empathetic
-
-professional
-
-clear
-
-short.
-
+RULES
+Use ONLY available information.
+Never invent facts.
+Always write in a professional and polite tone.
 """
-
         ),
-
         (
-
             "human",
-
             "{input}"
-
-        )
-
+        ),
+        MessagesPlaceholder(variable_name="agent_scratchpad")
     ]
-
 )

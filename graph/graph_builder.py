@@ -25,89 +25,31 @@ from graph.edges import approval_router
 
 workflow = StateGraph(WorkflowState)
 
-workflow.add_node(
-    "inventory",
-    inventory_node
-)
+workflow.add_node("inventory_agent", inventory_node)
+workflow.add_node("forecast_agent", forecast_node)
+workflow.add_node("risk_agent", risk_node)
+workflow.add_node("procurement_agent", procurement_node)
+workflow.add_node("approval", approval_node)
+workflow.add_node("logistics_agent", logistics_node)
+workflow.add_node("communication_agent", communication_node)
 
-workflow.add_node(
-    "forecast",
-    forecast_node
-)
+workflow.set_entry_point("inventory_agent")
 
-workflow.add_node(
-    "risk",
-    risk_node
-)
-
-workflow.add_node(
-    "procurement",
-    procurement_node
-)
-
-workflow.add_node(
-    "approval",
-    approval_node
-)
-
-workflow.add_node(
-    "logistics",
-    logistics_node
-)
-
-workflow.add_node(
-    "communication",
-    communication_node
-)
-
-workflow.set_entry_point(
-    "inventory"
-)
-
-workflow.add_edge(
-    "inventory",
-    "forecast"
-)
-
-workflow.add_edge(
-    "forecast",
-    "risk"
-)
-
-workflow.add_edge(
-    "risk",
-    "procurement"
-)
-
-workflow.add_edge(
-    "procurement",
-    "approval"
-)
+workflow.add_edge("inventory_agent", "forecast_agent")
+workflow.add_edge("forecast_agent", "risk_agent")
+workflow.add_edge("risk_agent", "procurement_agent")
+workflow.add_edge("procurement_agent", "approval")
 
 workflow.add_conditional_edges(
-
     "approval",
-
     approval_router,
-
     {
-
         "approval": "approval",
-
-        "logistics": "logistics"
-
+        "logistics": "logistics_agent"
     }
-
 )
 
-workflow.add_edge(
-    "logistics",
-    "communication"
-)
-
-workflow.add_edge(
-    "communication",
-    END
-)
+workflow.add_edge("logistics_agent", "communication_agent")
+workflow.add_edge("communication_agent", END)
 
 graph = workflow.compile()

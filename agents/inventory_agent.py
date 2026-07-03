@@ -1,7 +1,3 @@
-"""
-Inventory Agent
-"""
-
 from services.inventory_service import InventoryService
 
 

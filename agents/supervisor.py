@@ -6,9 +6,9 @@ from config.settings import *
 
 llm = AzureChatOpenAI(
 
-    azure_endpoint=AZURE_ENDPOINT,
+    azure_endpoint=AZURE_OPENAI_ENDPOINT,
 
-    api_key=AZURE_API_KEY,
+    api_key=AZURE_OPENAI_KEY,
 
     azure_deployment=AZURE_DEPLOYMENT,
 

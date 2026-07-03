@@ -1,3 +1,6 @@
+from dotenv import load_dotenv
+load_dotenv()
+
 import streamlit as st
 
 from graph.graph_builder import graph
@@ -28,6 +31,9 @@ if "approval_status" not in st.session_state:
 
 if "response" not in st.session_state:
     st.session_state.response = ""
+
+if "workflow_state" not in st.session_state:
+    st.session_state.workflow_state = None
 
 # ------------------------
 # Sidebar
@@ -63,9 +69,7 @@ if page == "Dashboard":
 
             "communication": {},
 
-            "approval_status":
-
-                st.session_state.approval_status,
+            "approval_status": st.session_state.approval_status,
 
             "logs": [],
 
@@ -73,7 +77,13 @@ if page == "Dashboard":
 
         }
 
+        # Save workflow state
+        st.session_state.workflow_state = state
+
         result = graph.invoke(state)
+
+        # Update workflow state
+        st.session_state.workflow_state = result
 
         st.session_state.logs = result["logs"]
 
@@ -109,9 +119,7 @@ elif page == "AI Copilot":
 
             "communication": {},
 
-            "approval_status":
-
-                st.session_state.approval_status,
+            "approval_status": st.session_state.approval_status,
 
             "logs": [],
 
@@ -119,8 +127,13 @@ elif page == "AI Copilot":
 
         }
 
+        # Save workflow state
+        st.session_state.workflow_state = state
+
         result = graph.invoke(state)
 
+        # Update workflow state
+        st.session_state.workflow_state = result
         st.write(result)
 
 # ------------------------
@@ -145,11 +158,35 @@ elif page == "Approval":
 
         st.session_state.approval_status = "Approved"
 
+        if st.session_state.workflow_state is not None:
+
+            st.session_state.workflow_state["approval_status"] = "Approved"
+
+            result = graph.invoke(st.session_state.workflow_state)
+
+            st.session_state.workflow_state = result
+
+            st.session_state.logs = result["logs"]
+
+            st.session_state.response = result
+
         st.success("Purchase Order Approved")
 
     if reject:
 
         st.session_state.approval_status = "Rejected"
+
+        if st.session_state.workflow_state is not None:
+
+            st.session_state.workflow_state["approval_status"] = "Rejected"
+
+            result = graph.invoke(st.session_state.workflow_state)
+
+            st.session_state.workflow_state = result
+
+            st.session_state.logs = result["logs"]
+
+            st.session_state.response = result
 
         st.error("Purchase Order Rejected")
 
@@ -183,7 +220,5 @@ elif page == "Analytics":
 elif page == "Logs":
 
     render_logs(
-
         st.session_state.logs
-
     )

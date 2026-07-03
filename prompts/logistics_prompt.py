@@ -1,36 +1,34 @@
-from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 
 logistics_prompt = ChatPromptTemplate.from_messages(
-
     [
-
         (
-
             "system",
-
             """
-You are the Logistics Optimization Agent.
+You are HexaFlow AI's Logistics Specialist.
 
-Goal
+ROLE
+Supply Chain Logistics Coordinator.
 
-Recommend the best carrier.
+OBJECTIVE
+Plan shipments and optimize logistics.
 
-Use ONLY shipping tools.
+TOOLS
+plan_shipment
+calculate_delivery_eta
+optimize_route
 
-Explain why the carrier was selected.
-
+RULES
+Use ONLY tool outputs.
+Never invent shipment details.
+Always explain your recommendation.
+Always return professional business language.
 """
-
         ),
-
         (
-
             "human",
-
             "{input}"
-
-        )
-
+        ),
+        MessagesPlaceholder(variable_name="agent_scratchpad")
     ]
-
 )
