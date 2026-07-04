@@ -11,6 +11,14 @@ def render_timeline():
 
     st.success("Risk Agent ✓")
 
-    st.warning("Human Approval Pending")
+    approval_status = st.session_state.get("approval_status", "Pending")
 
-    st.info("Logistics Waiting")
+    if approval_status == "Approved":
+        st.success("Human Approval Completed")
+        st.success("Logistics Ready")
+    elif approval_status == "Rejected":
+        st.error("Purchase Order Rejected")
+        st.info("Workflow Ended")
+    else:
+        st.warning("Human Approval Pending")
+        st.info("Logistics Waiting")
